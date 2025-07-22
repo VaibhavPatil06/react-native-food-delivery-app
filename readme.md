@@ -167,9 +167,11 @@ npx expo start
 ### Backend `.env`
 
 ```env
-PORT=5000
+PORT=3000
 MONGO_URI=mongodb://localhost:27017/fooddelivery
-JWT_SECRET=yourSecretKey
+ACCESS_TOKEN_SECRET=your_access_token_secret_here
+REFRESH_TOKEN_SECRET=your_refresh_token_secret_here
+PUBLIC_KEY=your_public_key_here
 ```
 
 ### Frontend `.env`
@@ -192,19 +194,11 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 ---
 
-## 📝 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
 ---
 
 ## 🙌 Author
 
-Made with ❤️ by \[Your Name]
+Made with ❤️ by Vaibhav Patil
 
 ```
 
----
-
-Let me know if you want me to also generate a table of APIs, preview actual `API_URL` usage, or create `.env.example` files.
-```
