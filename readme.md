@@ -1,40 +1,8 @@
 ```markdown
-# 🍔 Food Delivery App (React Native + Node.js)
+🍔 Food Delivery App (React Native + Node.js)
 
 A full-stack food delivery application built using **React Native (Expo)** for the frontend and **Node.js + MongoDB** for the backend. This app allows users to browse restaurants, place orders, track deliveries, and restaurant owners to manage their listings.
 
----
-
-## 📁 Project Structure
-
-```
-
-food-delivery/
-├── backend/               # Node.js backend API
-│   ├── database/          # MongoDB connection file
-│   ├── middleware/        # Auth, multer (image upload)
-│   ├── modules/           # Feature-wise API logic
-│   │   ├── category/
-│   │   ├── featured/
-│   │   ├── orders/
-│   │   └── user/
-│   ├── uploads/           # Image uploads
-│   ├── utils/             # Utility functions
-│   ├── .env               # Environment variables
-│   └── index.js           # App entry point
-│
-└── my-expo-app/           # React Native Expo frontend
-├── api/               # API base URL
-├── components/        # UI components
-├── constants/         # Constants and enums
-├── screens/           # App screens
-├── slices/            # Redux slices
-├── theme/             # Theme & Tailwind config
-├── utils/             # Storage & auth utils
-├── App.tsx            # Main entry point
-└── .env               # Frontend env file
-
-````
 
 ---
 
@@ -149,15 +117,15 @@ npx expo start
 
 | Home | Categories | Restaurant |
 |------|------------|------------|
-| ![Screenshot_1753177431](./assets/Screenshot_1753177431.png) | ![Screenshot_1753177448](./assets/Screenshot_1753177448.png) | ![Screenshot_1753177564](./assets/Screenshot_1753177564.png) |
+| ![Screenshot_1753177431](./my-expo-app/assets/Screenshot_1753177431.png) | ![Screenshot_1753177448](./my-expo-app/assets/Screenshot_1753177448.png) | ![Screenshot_1753177564](./my-expo-app/assets/Screenshot_1753177564.png) |
 
 | Dish Modal | Cart | Preparing Order |
 |------------|------|-----------------|
-| ![Screenshot_1753177587](./assets/Screenshot_1753177587.png) | ![Screenshot_1753178174](./assets/Screenshot_1753178174.png) | ![Screenshot_1753178576](./assets/Screenshot_1753178576.png) |
+| ![Screenshot_1753177587](./my-expo-app/assets/Screenshot_1753177587.png) | ![Screenshot_1753178174](./my-expo-app/assets/Screenshot_1753178174.png) | ![Screenshot_1753178576](./my-expo-app/assets/Screenshot_1753178576.png) |
 
 | Delivery Screen | Order Confirmation |
 |-----------------|--------------------|
-| ![Screenshot_1753178585](./assets/Screenshot_1753178585.png) | ![Screenshot_1753178591](./assets/Screenshot_1753178591.png) |
+| ![Screenshot_1753178585](./my-expo-app/assets/Screenshot_1753178585.png) | ![Screenshot_1753178591](./my-expo-app/assets/Screenshot_1753178591.png) |
 
 </div>
 
