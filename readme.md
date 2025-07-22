@@ -115,18 +115,24 @@ npx expo start
 
 <div align="center">
 
-| Home | Categories | Restaurant |
+| Login Screen | SignUp screen | Login Success full |
 |------|------------|------------|
 | ![Screenshot_1753177431](./my-expo-app/assets/Screenshot_1753177431.png) | ![Screenshot_1753177448](./my-expo-app/assets/Screenshot_1753177448.png) | ![Screenshot_1753177564](./my-expo-app/assets/Screenshot_1753177564.png) |
 
-| Dish Modal | Cart | Preparing Order |
-|------------|------|-----------------|
-| ![Screenshot_1753177587](./my-expo-app/assets/Screenshot_1753177587.png) | ![Screenshot_1753178174](./my-expo-app/assets/Screenshot_1753178174.png) | ![Screenshot_1753178576](./my-expo-app/assets/Screenshot_1753178576.png) |
+| Restaurant Owner form | Restaurant Home Screen | Restaurant Home screen |Restaurant Home screen |
+|------------|------|-----------------|-----------------|
+| ![Screenshot_1753177587](./my-expo-app/assets/Screenshot_1753177587.png) | ![Screenshot_1753178174](./my-expo-app/assets/Screenshot_1753178174.png) | ![Screenshot_1753178697](./my-expo-app/assets/Screenshot_1753178697.png) |![Screenshot_1753178689](./my-expo-app/assets/Screenshot_1753178689.png) |
 
-| Delivery Screen | Order Confirmation |
+| User Home screen | select Restaurant | Cart Screen |
 |-----------------|--------------------|
-| ![Screenshot_1753178585](./my-expo-app/assets/Screenshot_1753178585.png) | ![Screenshot_1753178591](./my-expo-app/assets/Screenshot_1753178591.png) |
+| ![Screenshot_1753178576](./my-expo-app/assets/Screenshot_1753178576.png) | ![Screenshot_1753178585](./my-expo-app/assets/Screenshot_1753178585.png) | ![Screenshot_1753178591](./my-expo-app/assets/Screenshot_1753178591.png) |
 
+| Delivery Screen | My Order screen | Order details screen |
+|-----------------|--------------------|
+| ![Screenshot_1753178599](./my-expo-app/assets/Screenshot_1753178599.png) | ![Screenshot_1753178880](./my-expo-app/assets/Screenshot_1753178880.png) |  | ![Screenshot_1753178948](./my-expo-app/assets/Screenshot_1753178948.png) |
+
+
+| ![Screenshot_1753178594](./my-expo-app/assets/Screenshot_1753178594.png) || ![Screenshot_1753178950](./my-expo-app/assets/Screenshot_1753178950.png) |
 </div>
 
 ---
