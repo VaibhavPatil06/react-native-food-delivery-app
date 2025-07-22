@@ -115,24 +115,40 @@ npx expo start
 
 <div align="center">
 
-| Login Screen | SignUp screen | Login Success full |
-|------|------------|------------|
-| ![Screenshot_1753177431](./my-expo-app/assets/Screenshot_1753177431.png) | ![Screenshot_1753177448](./my-expo-app/assets/Screenshot_1753177448.png) | ![Screenshot_1753177564](./my-expo-app/assets/Screenshot_1753177564.png) |
+### 🔐 Authentication
 
-| Restaurant Owner form | Restaurant Home Screen | Restaurant Home screen |Restaurant Home screen |
-|------------|------|-----------------|-----------------|
-| ![Screenshot_1753177587](./my-expo-app/assets/Screenshot_1753177587.png) | ![Screenshot_1753178174](./my-expo-app/assets/Screenshot_1753178174.png) | ![Screenshot_1753178697](./my-expo-app/assets/Screenshot_1753178697.png) |![Screenshot_1753178689](./my-expo-app/assets/Screenshot_1753178689.png) |
+| Login Screen | SignUp Screen | Login Successful |
+|--------------|---------------|------------------|
+| ![Login](./my-expo-app/assets/Screenshot_1753177431.png) | ![SignUp](./my-expo-app/assets/Screenshot_1753177448.png) | ![Login Success](./my-expo-app/assets/Screenshot_1753177564.png) |
 
-| User Home screen | select Restaurant | Cart Screen |
-|-----------------|--------------------|
-| ![Screenshot_1753178576](./my-expo-app/assets/Screenshot_1753178576.png) | ![Screenshot_1753178585](./my-expo-app/assets/Screenshot_1753178585.png) | ![Screenshot_1753178591](./my-expo-app/assets/Screenshot_1753178591.png) |
+---
 
-| Delivery Screen | My Order screen | Order details screen |
-|-----------------|--------------------|
-| ![Screenshot_1753178599](./my-expo-app/assets/Screenshot_1753178599.png) | ![Screenshot_1753178880](./my-expo-app/assets/Screenshot_1753178880.png) |  | ![Screenshot_1753178948](./my-expo-app/assets/Screenshot_1753178948.png) |
+### 🧾 Restaurant Owner Flow
 
+| Restaurant Owner Form | Restaurant Home Screen 1 | Restaurant Home Screen 2 | Restaurant Home Screen 3 |
+|------------------------|--------------------------|--------------------------|--------------------------|
+| ![Form](./my-expo-app/assets/Screenshot_1753177587.png) | ![Home 1](./my-expo-app/assets/Screenshot_1753178174.png) | ![Home 2](./my-expo-app/assets/Screenshot_1753178697.png) | ![Home 3](./my-expo-app/assets/Screenshot_1753178689.png) |
 
-| ![Screenshot_1753178594](./my-expo-app/assets/Screenshot_1753178594.png) || ![Screenshot_1753178950](./my-expo-app/assets/Screenshot_1753178950.png) |
+---
+
+### 🍽️ User Flow
+
+| User Home Screen | Select Restaurant | Cart Screen |
+|------------------|-------------------|-------------|
+| ![User Home](./my-expo-app/assets/Screenshot_1753178576.png) | ![Select](./my-expo-app/assets/Screenshot_1753178585.png) | ![Cart](./my-expo-app/assets/Screenshot_1753178591.png) |
+
+---
+
+### 🚚 Delivery & Orders
+
+| Delivery Screen | My Orders Screen | Order Details Screen | Final Status Screen |
+|-----------------|------------------|-----------------------|---------------------|
+| ![Delivery](./my-expo-app/assets/Screenshot_1753178599.png) | ![Orders](./my-expo-app/assets/Screenshot_1753178880.png) | ![Details](./my-expo-app/assets/Screenshot_1753178948.png) | ![Status](./my-expo-app/assets/Screenshot_1753178950.png) |
+
+| Extra Delivery Screen |
+|-----------------------|
+| ![Delivery 2](./my-expo-app/assets/Screenshot_1753178594.png) |
+
 </div>
 
 ---
