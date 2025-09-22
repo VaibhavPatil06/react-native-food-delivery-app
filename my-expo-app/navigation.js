@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { BACKEND_URL } from '@env';
+import Constants from 'expo-constants';
+
+const { BACKEND_URL } = Constants.expoConfig.extra;
 // Screens
 import CartScreen from 'screens/CartScreen';
 import DeliveryScreen from 'screens/DeliveryScreen';
@@ -43,13 +45,15 @@ const AppStack = ({ isRestaurantOwner, hasRestaurantProfile }) => (
         <Stack.Screen name="Restaurant" component={RestaurantScreen} />
         <Stack.Screen name="Cart" options={{ presentation: 'modal' }} component={CartScreen} />
         <Stack.Screen name="Delivery" component={DeliveryScreen} />
+        <Stack.Screen name="RestaurantOwnerHomePage" component={RestaurantOwnerHomePage} />
+
         <Stack.Screen name="MyOrders" component={MyOrdersScreen} />
         <Stack.Screen
           name="OrderPrepairing"
           options={{ presentation: 'fullScreenModal' }}
           component={OrderPrepairingScreen}
         />
-      <Stack.Screen name="OrderDetail" component={OrderDetailScreen} />
+        <Stack.Screen name="OrderDetail" component={OrderDetailScreen} />
       </>
     )}
   </Stack.Navigator>
@@ -62,6 +66,7 @@ const Navigation = () => {
   const [isRestaurantOwner, setIsRestaurantOwner] = useState(false);
 
   useEffect(() => {
+    console.log(BACKEND_URL);
     const checkRestaurantProfile = async () => {
       if (user?.role === 'restaurantOwner') {
         setIsRestaurantOwner(true);

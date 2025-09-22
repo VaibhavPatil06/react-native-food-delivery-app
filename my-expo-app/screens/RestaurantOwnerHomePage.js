@@ -20,7 +20,9 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons, MaterialIcons, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
-import { BACKEND_URL, IMAGE_URL } from '@env';
+import Constants from 'expo-constants';
+
+const { BACKEND_URL, IMAGE_URL } = Constants.expoConfig.extra;
 
 const { width, height } = Dimensions.get('window');
 const API_URL = `${BACKEND_URL}/featured`;
@@ -65,7 +67,7 @@ const RestaurantOwnerHomePage = ({ navigation }) => {
         : isNaN(newDish.price)
           ? 'Price must be a number'
           : '',
-      image: !newDish.image ? 'Image is required' : '',
+      // image: !newDish.image ? 'Image is required' : '',
       general: '',
     };
 
@@ -148,76 +150,75 @@ const RestaurantOwnerHomePage = ({ navigation }) => {
     }
   };
 
- const handleEditDish = (dish) => {
-   setEditingDish(dish);
-   setNewDish({
-     name: dish.name,
-     price: dish.price.toString(),
-     description: dish.description,
-     image: dish.image ? { uri: `${IMAGE_URL}${dish.image}` } : null,
-   });
-   setShowAddDishModal(true);
- };
+  const handleEditDish = (dish) => {
+    setEditingDish(dish);
+    setNewDish({
+      name: dish.name,
+      price: dish.price.toString(),
+      description: dish.description,
+      image: dish.image ? { uri: `${IMAGE_URL}${dish.image}` } : null,
+    });
+    setShowAddDishModal(true);
+  };
 
- const handleAddOrUpdateDish = async () => {
-   if (!validateForm()) return;
+  const handleAddOrUpdateDish = async () => {
+    if (!validateForm()) return;
 
-   try {
-     setLoading((prev) => ({ ...prev, addDish: true }));
+    try {
+      setLoading((prev) => ({ ...prev, addDish: true }));
 
-     const formData = new FormData();
-     formData.append('name', newDish.name);
-     formData.append('price', newDish.price);
-     formData.append('description', newDish.description);
+      const formData = new FormData();
+      formData.append('name', newDish.name);
+      formData.append('price', newDish.price);
+      formData.append('description', newDish.description);
 
-     if (newDish.image && newDish.image.uri) {
-       // Only append if it's a new image (has uri property)
-       formData.append('image', {
-         uri: newDish.image.uri,
-         name: `dish-${Date.now()}.jpg`,
-         type: 'image/jpeg',
-       });
-     }
+      if (newDish.image && newDish.image.uri) {
+        // Only append if it's a new image (has uri property)
+        formData.append('image', {
+          uri: newDish.image.uri,
+          name: `dish-${Date.now()}.jpg`,
+          type: 'image/jpeg',
+        });
+      }
 
-     const url = editingDish
-       ? `${API_URL}/update-dish?dishId=${editingDish?._id}`
-       : `${API_URL}/restaurant/dishes`;
+      const url = editingDish
+        ? `${API_URL}/update-dish?dishId=${editingDish?._id}`
+        : `${API_URL}/restaurant/dishes`;
 
+      const response = await axios.post(url, formData, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
 
-     const response = await axios.post(url, formData, {
-       headers: {
-         Authorization: `Bearer ${accessToken}`,
-         'Content-Type': 'multipart/form-data',
-       },
-     });
+      // Update state based on whether we're adding or editing
+      if (editingDish) {
+        setDishes((prevDishes) =>
+          prevDishes.map((dish) => (dish?._id === editingDish?._id ? response.data.dish : dish))
+        );
+      } else {
+        setDishes((prevDishes) => [...prevDishes, response.data.dish]);
+      }
 
-     // Update state based on whether we're adding or editing
-     if (editingDish) {
-       setDishes((prevDishes) =>
-         prevDishes.map((dish) => (dish?._id === editingDish?._id ? response.data.dish : dish))
-       );
-     } else {
-       setDishes((prevDishes) => [...prevDishes, response.data.dish]);
-     }
+      resetDishForm();
+      Alert.alert('Success', `Dish ${editingDish ? 'updated' : 'added'} successfully!`);
+    } catch (err) {
+      console.error('Error saving dish:', err);
+      showErrorAlert(
+        `Failed to ${editingDish ? 'update' : 'add'} dish`,
+        err.response?.data?.message || err.message
+      );
+    } finally {
+      setLoading((prev) => ({ ...prev, addDish: false }));
+    }
+  };
 
-     resetDishForm();
-     Alert.alert('Success', `Dish ${editingDish ? 'updated' : 'added'} successfully!`);
-   } catch (err) {
-     console.error('Error saving dish:', err);
-     showErrorAlert(
-       `Failed to ${editingDish ? 'update' : 'add'} dish`,
-       err.response?.data?.message || err.message
-     );
-   } finally {
-     setLoading((prev) => ({ ...prev, addDish: false }));
-   }
- };
-
- const resetDishForm = () => {
-   setNewDish({ name: '', price: '', description: '', image: null });
-   setEditingDish(null);
-   setShowAddDishModal(false);
- };
+  const resetDishForm = () => {
+    setNewDish({ name: '', price: '', description: '', image: null });
+    setEditingDish(null);
+    setShowAddDishModal(false);
+  };
   const handleDeleteDish = async (dishId) => {
     try {
       setLoading((prev) => ({ ...prev, deleteDish: true }));
@@ -266,7 +267,9 @@ const RestaurantOwnerHomePage = ({ navigation }) => {
   const renderOrderItem = ({ item }) => (
     <View style={styles.orderCard}>
       <View style={styles.orderHeader}>
-        <Text style={styles.orderId}>Order #{item?._id.substring(0, 6)}</Text>
+        <Text style={styles.orderId}>
+          Order #{item?._id.substring(0, 6) ? item?._id.substring(0, 6) : 0}
+        </Text>
         <View style={[styles.statusBadge, { backgroundColor: statusColors[item.status] }]}>
           <MaterialCommunityIcons
             name={statusIcons[item.status]}
@@ -326,52 +329,49 @@ const RestaurantOwnerHomePage = ({ navigation }) => {
     </View>
   );
 
- const renderDishItem = ({ item }) => {
-   const imageUrl = item.image
-     ? `${IMAGE_URL}${item.image}`
-     : 'https://via.placeholder.com/150';
-(imageUrl)
-   return (
-     <View style={styles.dishCard}>
-       <Image source={{ uri: imageUrl }} style={styles.dishImage} />
-       <View style={styles.dishDetails}>
-         <Text style={styles.dishName}>{item.name}</Text>
-         <View style={styles.priceRatingContainer}>
-           <Text style={styles.dishPrice}>₹{item.price}</Text>
-           <View style={styles.popularTag}>
-             <MaterialIcons name="star" size={14} color="#FFD700" />
-             <Text style={styles.popularText}>Popular</Text>
-           </View>
-         </View>
-         <Text style={styles.dishDescription} numberOfLines={2}>
-           {item.description || 'No description'}
-         </Text>
+  const renderDishItem = ({ item }) => {
+    const imageUrl = item.image ? `${IMAGE_URL}${item.image}` : 'https://via.placeholder.com/150';
+    imageUrl;
+    return (
+      <View style={styles.dishCard}>
+        <Image source={{ uri: imageUrl }} style={styles.dishImage} />
+        <View style={styles.dishDetails}>
+          <Text style={styles.dishName}>{item.name}</Text>
+          <View style={styles.priceRatingContainer}>
+            <Text style={styles.dishPrice}>₹{item.price}</Text>
+            <View style={styles.popularTag}>
+              <MaterialIcons name="star" size={14} color="#FFD700" />
+              <Text style={styles.popularText}>Popular</Text>
+            </View>
+          </View>
+          <Text style={styles.dishDescription} numberOfLines={2}>
+            {item.description || 'No description'}
+          </Text>
 
-         <View style={styles.dishActions}>
-           <TouchableOpacity
-             style={[styles.actionButton, styles.editButton]}
-             onPress={() => handleEditDish(item)}
-             disabled={loading.deleteDish}>
-             <Icon name="edit" size={26} color="#fff" />
-           </TouchableOpacity>
-           <TouchableOpacity
-             style={[styles.actionButton, styles.deleteButton]}
-             onPress={() => handleDeleteDish(item._id)}
-             disabled={loading.deleteDish}>
-             {loading.deleteDish ? (
-               <ActivityIndicator size="small" color="#fff" />
-             ) : (
-               <>
-                 <Icon name="delete" size={26} color="#fff" />
-               </>
-             )}
-           </TouchableOpacity>
-         </View>
-       </View>
-     </View>
-   );
- };
-
+          <View style={styles.dishActions}>
+            <TouchableOpacity
+              style={[styles.actionButton, styles.editButton]}
+              onPress={() => handleEditDish(item)}
+              disabled={loading.deleteDish}>
+              <Icon name="edit" size={26} color="#fff" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.actionButton, styles.deleteButton]}
+              onPress={() => handleDeleteDish(item._id)}
+              disabled={loading.deleteDish}>
+              {loading.deleteDish ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <>
+                  <Icon name="delete" size={26} color="#fff" />
+                </>
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    );
+  };
 
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
@@ -446,7 +446,7 @@ const RestaurantOwnerHomePage = ({ navigation }) => {
             <FlatList
               data={dishes}
               renderItem={renderDishItem}
-              keyExtractor={(item) => item._id}
+              keyExtractor={(item) => (item?._id ? item._id : '')}
               scrollEnabled={false}
               contentContainerStyle={styles.listContainer}
             />
@@ -497,7 +497,10 @@ const RestaurantOwnerHomePage = ({ navigation }) => {
                 activeOpacity={0.8}>
                 {newDish.image ? (
                   <>
-                    <Image source={{ uri: `${IMAGE_URL}${newDish.image.uri}` }} style={styles.previewImage} />
+                    <Image
+                      source={{ uri: `${IMAGE_URL}${newDish.image.uri}` }}
+                      style={styles.previewImage}
+                    />
                     <View style={styles.editOverlay}>
                       <MaterialIcons name="edit" size={24} color="white" />
                     </View>

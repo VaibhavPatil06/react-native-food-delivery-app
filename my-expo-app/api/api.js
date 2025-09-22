@@ -1,6 +1,8 @@
 import axios from 'axios';
-import { getData, removeData } from '../utils/asyncStorage';
-import { BACKEND_URL } from '@env';
+import { getData, removeData, storeData } from '../utils/asyncStorage';
+import Constants from 'expo-constants';
+
+const { BACKEND_URL } = Constants.expoConfig.extra;
 
 const API = axios.create({
   baseURL: BACKEND_URL, // Fixed the URL (removed .com)
@@ -24,8 +26,6 @@ export const placeOrder = async (orderData, token) => {
 };
 export const getOrderById = async (orderId, token) => {
   try {
-
-
     const response = await API.get(`/order/${orderId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -57,7 +57,7 @@ export const fetchCategories = async () => {
     const response = await API.get('/categories');
     return response.data;
   } catch (error) {
-      console.log(error)
+    console.log(error);
     console.error('Error fetching categories:', error);
     throw error;
   }
@@ -68,8 +68,8 @@ export const fetchFeatured = async () => {
     const response = await API.get('/featured');
     return response.data;
   } catch (error) {
-    console.error('Error fetching featured:', error);
-    throw error;
+    // console.error('Error fetching featured:', error);
+    // throw error;
   }
 };
 

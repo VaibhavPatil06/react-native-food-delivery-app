@@ -1,8 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { removeData, storeData } from 'utils/asyncStorage';
-import { BACKEND_URL } from '@env';
+import Constants from 'expo-constants';
 
+const { BACKEND_URL } = Constants.expoConfig.extra;
 const API_URL = `${BACKEND_URL}/auth`;
 
 // Async Thunks
@@ -22,13 +23,13 @@ export const loginUser = createAsyncThunk(
 
 export const registerUser = createAsyncThunk(
   'auth/register',
-  async ({ name, email, password,role }, { rejectWithValue }) => {
+  async ({ name, email, password, role }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_URL}/register`, { name, email, password,role });
-     
+      const response = await axios.post(`${API_URL}/register`, { name, email, password, role });
+
       return response.data;
     } catch (error) {
-      console.log(error)
+      console.log(error);
       return rejectWithValue(error.response.data);
     }
   }

@@ -87,7 +87,7 @@ export const addRestaurant = async (req, res) => {
     req.user;
     const restaurant = await restaurantsSchema.create({
       name,
-      image,
+      image:image || "",
       description,
       latitude,
       longitude,

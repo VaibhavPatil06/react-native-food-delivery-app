@@ -11,7 +11,9 @@
     "experiments": {
       "tsconfigPaths": true
     },
-
+    "extra": {
+      "BACKEND_URL": "http://192.168.31.195:3000/api"
+    },
     "plugins": [],
 
     "orientation": "portrait",
@@ -29,11 +31,12 @@
       "supportsTablet": true
     },
     "android": {
-       "package": "com.vaibhav.foodieXpress",
+      "package": "com.vaibhav.foodieXpress",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": ["READ_MEDIA_IMAGES", "CAMERA", "ACCESS_FINE_LOCATION"]
     }
   }
 }

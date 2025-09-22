@@ -27,7 +27,7 @@ const restaurantSchema = new mongoose.Schema({
   },
   image: {
     type: String,
-    required: true,
+    required: false,
   },
   description: String,
   latitude: Number,

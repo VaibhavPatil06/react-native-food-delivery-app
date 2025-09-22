@@ -26,8 +26,9 @@ import MapView, { Marker } from 'react-native-maps';
 import LottieView from 'lottie-react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { BACKEND_URL, IMAGE_URL } from '@env';
+import Constants from 'expo-constants';
 
+const { BACKEND_URL, IMAGE_URL } = Constants.expoConfig.extra;
 const { width } = Dimensions.get('window');
 const API_URL = `${BACKEND_URL}/featured`;
 
@@ -109,7 +110,7 @@ export default function FillRestaurantDetailsScreen({ navigation }) {
     if (!form.name.trim()) newErrors.name = 'Name is required';
     if (!form.address.trim()) newErrors.address = 'Address is required';
     if (!form.description.trim()) newErrors.description = 'Description is required';
-    if (!image) newErrors.image = 'Image is required';
+    // if (!image) newErrors.image = 'Image is required';
     if (!form.latitude || !form.longitude) newErrors.location = 'Location is required';
 
     setErrors(newErrors);
@@ -147,7 +148,7 @@ export default function FillRestaurantDetailsScreen({ navigation }) {
         animateSuccess();
 
         setTimeout(() => {
-          navigation.navigate('RestaurantOwnerHomePage');
+          navigation.navigate('Login');
         }, 2500);
       } else {
         Alert.alert('Error', response.data.message || 'Failed to add restaurant');
@@ -188,271 +189,274 @@ export default function FillRestaurantDetailsScreen({ navigation }) {
     );
   }
 
-    return (
-      <SafeAreaView style={{ flex: 1 }}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.container}>
-          <LinearGradient colors={['#f9f9f9', '#ffffff']} style={styles.gradient}>
-            <PanGestureHandler
-              onGestureEvent={onGestureEvent}
-              onHandlerStateChange={onHandlerStateChange}>
-              <Animated.View
-                style={{
-                  transform: [{ translateY: translateY }],
-                }}>
-                <ScrollView
-                  contentContainerStyle={styles.scrollContainer}
-                  keyboardShouldPersistTaps="handled"
-                  showsVerticalScrollIndicator={false}>
-                  {/* Header */}
-                  <View style={styles.header}>
-                    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                      <Ionicons name="arrow-back" size={24} color="#333" />
-                    </TouchableOpacity>
-                    <Text style={styles.title}>Add Your Restaurant</Text>
-                    <View style={{ width: 24 }} />
-                  </View>
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.container}>
+        <LinearGradient colors={['#f9f9f9', '#ffffff']} style={styles.gradient}>
+          <PanGestureHandler
+            onGestureEvent={onGestureEvent}
+            onHandlerStateChange={onHandlerStateChange}>
+            <Animated.View
+              style={{
+                transform: [{ translateY: translateY }],
+              }}>
+              <ScrollView
+                contentContainerStyle={styles.scrollContainer}
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}>
+                {/* Header */}
+                <View style={styles.header}>
+                  <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                    <Ionicons name="arrow-back" size={24} color="#333" />
+                  </TouchableOpacity>
+                  <Text style={styles.title}>Add Your Restaurant</Text>
+                  <View style={{ width: 24 }} />
+                </View>
 
-                  {/* Image Upload */}
-                  <View style={styles.imageSection}>
-                    <TouchableOpacity
-                      style={styles.imageUploadButton}
-                      onPress={pickImage}
-                      activeOpacity={0.8}>
-                      {image ? (
-                        <>
-                          <Image source={{ uri: `${IMAGE_URL}${image.uri}` }} style={styles.previewImage} />
-                          <View style={styles.editOverlay}>
-                            <MaterialIcons name="edit" size={24} color="white" />
-                          </View>
-                        </>
-                      ) : (
-                        <View style={styles.uploadPlaceholder}>
-                          <FontAwesome name="camera" size={32} color="#666" />
-                          <Text style={styles.uploadText}>Add Restaurant Photo</Text>
-                          {errors.image && <Text style={styles.errorText}>{errors.image}</Text>}
-                        </View>
-                      )}
-                    </TouchableOpacity>
-                  </View>
-
-                  {/* Form Fields */}
-                  <View style={styles.formContainer}>
-                    <View style={styles.inputGroup}>
-                      <Text style={styles.label}>Restaurant Name *</Text>
-                      <View style={[styles.inputContainer, errors.name && styles.inputError]}>
-                        <MaterialIcons
-                          name="restaurant"
-                          size={20}
-                          color="#666"
-                          style={styles.inputIcon}
-                        />
-                        <TextInput
-                          style={styles.input}
-                          placeholder="e.g. Taste of Italy"
-                          value={form.name}
-                          onChangeText={(text) => setForm({ ...form, name: text })}
-                        />
-                      </View>
-                      {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
-                    </View>
-
-                    <View style={styles.inputGroup}>
-                      <Text style={styles.label}>Description *</Text>
-                      <View
-                        style={[
-                          styles.inputContainer,
-                          styles.multilineContainer,
-                          errors.description && styles.inputError,
-                        ]}>
-                        <MaterialIcons
-                          name="description"
-                          size={20}
-                          color="#666"
-                          style={styles.inputIcon}
-                        />
-                        <TextInput
-                          style={[styles.input, styles.multilineInput]}
-                          placeholder="Describe your restaurant"
-                          value={form.description}
-                          onChangeText={(text) => setForm({ ...form, description: text })}
-                          multiline
-                          numberOfLines={4}
-                        />
-                      </View>
-                      {errors.description && (
-                        <Text style={styles.errorText}>{errors.description}</Text>
-                      )}
-                    </View>
-
-                    <View style={styles.inputGroup}>
-                      <Text style={styles.label}>Address *</Text>
-                      <View style={[styles.inputContainer, errors.address && styles.inputError]}>
-                        <MaterialIcons
-                          name="location-on"
-                          size={20}
-                          color="#666"
-                          style={styles.inputIcon}
-                        />
-                        <TextInput
-                          style={styles.input}
-                          placeholder="Full address"
-                          value={form.address}
-                          onChangeText={(text) => setForm({ ...form, address: text })}
-                        />
-                      </View>
-                      {errors.address && <Text style={styles.errorText}>{errors.address}</Text>}
-                    </View>
-
-                    <View style={styles.inputGroup}>
-                      <Text style={styles.label}>Location *</Text>
-                      <View style={styles.locationContainer}>
-                        <View style={[styles.inputContainer, { flex: 1, marginRight: 10 }]}>
-                          <MaterialIcons
-                            name="gps-fixed"
-                            size={20}
-                            color="#666"
-                            style={styles.inputIcon}
-                          />
-                          <TextInput
-                            style={styles.input}
-                            placeholder="Latitude"
-                            value={form.latitude}
-                            keyboardType="numeric"
-                            onChangeText={(text) => setForm({ ...form, latitude: text })}
-                          />
-                        </View>
-                        <View style={[styles.inputContainer, { flex: 1 }]}>
-                          <TextInput
-                            style={styles.input}
-                            placeholder="Longitude"
-                            value={form.longitude}
-                            keyboardType="numeric"
-                            onChangeText={(text) => setForm({ ...form, longitude: text })}
-                          />
-                        </View>
-                        <TouchableOpacity
-                          style={styles.locationButton}
-                          onPress={getCurrentLocation}
-                          disabled={loading}>
-                          {loading ? (
-                            <ActivityIndicator size="small" color="white" />
-                          ) : (
-                            <MaterialIcons name="my-location" size={20} color="white" />
-                          )}
-                        </TouchableOpacity>
-                      </View>
-                      {errors.location && <Text style={styles.errorText}>{errors.location}</Text>}
-                    </View>
-
-                    {mapVisible && location && (
-                      <View style={styles.mapContainer}>
-                        <MapView
-                          style={styles.map}
-                          initialRegion={{
-                            latitude: location.latitude,
-                            longitude: location.longitude,
-                            latitudeDelta: 0.005,
-                            longitudeDelta: 0.005,
-                          }}>
-                          <Marker
-                            coordinate={{
-                              latitude: location.latitude,
-                              longitude: location.longitude,
-                            }}
-                            title="Your Restaurant">
-                            <View style={styles.marker}>
-                              <MaterialIcons
-                                name="restaurant"
-                                size={24}
-                                color={themeColor.bgColor(1)}
-                              />
-                            </View>
-                          </Marker>
-                        </MapView>
-                      </View>
-                    )}
-
-                    <View style={styles.row}>
-                      <View style={[styles.inputGroup, { flex: 1, marginRight: 10 }]}>
-                        <Text style={styles.label}>Rating</Text>
-                        <View style={styles.inputContainer}>
-                          <MaterialIcons
-                            name="star"
-                            size={20}
-                            color="#FFD700"
-                            style={styles.inputIcon}
-                          />
-                          <TextInput
-                            style={styles.input}
-                            placeholder="e.g. 4.5"
-                            value={form.stars}
-                            keyboardType="numeric"
-                            onChangeText={(text) => setForm({ ...form, stars: text })}
-                          />
-                        </View>
-                      </View>
-                      <View style={[styles.inputGroup, { flex: 1 }]}>
-                        <Text style={styles.label}>Reviews</Text>
-                        <View style={styles.inputContainer}>
-                          <MaterialIcons
-                            name="reviews"
-                            size={20}
-                            color="#666"
-                            style={styles.inputIcon}
-                          />
-                          <TextInput
-                            style={styles.input}
-                            placeholder="e.g. 100+"
-                            value={form.reviews}
-                            onChangeText={(text) => setForm({ ...form, reviews: text })}
-                          />
-                        </View>
-                      </View>
-                    </View>
-
-                    <View style={styles.inputGroup}>
-                      <Text style={styles.label}>Categories</Text>
-                      <View style={styles.inputContainer}>
-                        <MaterialIcons
-                          name="category"
-                          size={20}
-                          color="#666"
-                          style={styles.inputIcon}
-                        />
-                        <TextInput
-                          style={styles.input}
-                          placeholder="e.g. Italian, Pizza, Pasta"
-                          value={form.categories}
-                          onChangeText={(text) => setForm({ ...form, categories: text })}
-                        />
-                      </View>
-                    </View>
-                  </View>
-
-                  {/* Submit Button */}
+                {/* Image Upload */}
+                <View style={styles.imageSection}>
                   <TouchableOpacity
-                    style={[styles.submitButton, loading && styles.submitButtonDisabled]}
-                    onPress={handleSubmit}
-                    disabled={loading}
+                    style={styles.imageUploadButton}
+                    onPress={pickImage}
                     activeOpacity={0.8}>
-                    {loading ? (
-                      <ActivityIndicator color="white" />
+                    {image ? (
+                      <>
+                        <Image
+                          source={{ uri: `${IMAGE_URL}${image.uri}` }}
+                          style={styles.previewImage}
+                        />
+                        <View style={styles.editOverlay}>
+                          <MaterialIcons name="edit" size={24} color="white" />
+                        </View>
+                      </>
                     ) : (
-                      <Text style={styles.submitButtonText}>
-                        <MaterialIcons name="add-business" size={20} color="white" /> Submit
-                        Restaurant
-                      </Text>
+                      <View style={styles.uploadPlaceholder}>
+                        <FontAwesome name="camera" size={32} color="#666" />
+                        <Text style={styles.uploadText}>Add Restaurant Photo</Text>
+                        {errors.image && <Text style={styles.errorText}>{errors.image}</Text>}
+                      </View>
                     )}
                   </TouchableOpacity>
-                </ScrollView>
-              </Animated.View>
-            </PanGestureHandler>
-          </LinearGradient>
-        </KeyboardAvoidingView>
-      </SafeAreaView>
-    );
+                </View>
+
+                {/* Form Fields */}
+                <View style={styles.formContainer}>
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.label}>Restaurant Name *</Text>
+                    <View style={[styles.inputContainer, errors.name && styles.inputError]}>
+                      <MaterialIcons
+                        name="restaurant"
+                        size={20}
+                        color="#666"
+                        style={styles.inputIcon}
+                      />
+                      <TextInput
+                        style={styles.input}
+                        placeholder="e.g. Taste of Italy"
+                        value={form.name}
+                        onChangeText={(text) => setForm({ ...form, name: text })}
+                      />
+                    </View>
+                    {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
+                  </View>
+
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.label}>Description *</Text>
+                    <View
+                      style={[
+                        styles.inputContainer,
+                        styles.multilineContainer,
+                        errors.description && styles.inputError,
+                      ]}>
+                      <MaterialIcons
+                        name="description"
+                        size={20}
+                        color="#666"
+                        style={styles.inputIcon}
+                      />
+                      <TextInput
+                        style={[styles.input, styles.multilineInput]}
+                        placeholder="Describe your restaurant"
+                        value={form.description}
+                        onChangeText={(text) => setForm({ ...form, description: text })}
+                        multiline
+                        numberOfLines={4}
+                      />
+                    </View>
+                    {errors.description && (
+                      <Text style={styles.errorText}>{errors.description}</Text>
+                    )}
+                  </View>
+
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.label}>Address *</Text>
+                    <View style={[styles.inputContainer, errors.address && styles.inputError]}>
+                      <MaterialIcons
+                        name="location-on"
+                        size={20}
+                        color="#666"
+                        style={styles.inputIcon}
+                      />
+                      <TextInput
+                        style={styles.input}
+                        placeholder="Full address"
+                        value={form.address}
+                        onChangeText={(text) => setForm({ ...form, address: text })}
+                      />
+                    </View>
+                    {errors.address && <Text style={styles.errorText}>{errors.address}</Text>}
+                  </View>
+
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.label}>Location *</Text>
+                    <View style={styles.locationContainer}>
+                      <View style={[styles.inputContainer, { flex: 1, marginRight: 10 }]}>
+                        <MaterialIcons
+                          name="gps-fixed"
+                          size={20}
+                          color="#666"
+                          style={styles.inputIcon}
+                        />
+                        <TextInput
+                          style={styles.input}
+                          placeholder="Latitude"
+                          value={form.latitude}
+                          keyboardType="numeric"
+                          onChangeText={(text) => setForm({ ...form, latitude: text })}
+                        />
+                      </View>
+                      <View style={[styles.inputContainer, { flex: 1 }]}>
+                        <TextInput
+                          style={styles.input}
+                          placeholder="Longitude"
+                          value={form.longitude}
+                          keyboardType="numeric"
+                          onChangeText={(text) => setForm({ ...form, longitude: text })}
+                        />
+                      </View>
+                      <TouchableOpacity
+                        style={styles.locationButton}
+                        onPress={getCurrentLocation}
+                        disabled={loading}>
+                        {loading ? (
+                          <ActivityIndicator size="small" color="white" />
+                        ) : (
+                          <MaterialIcons name="my-location" size={20} color="white" />
+                        )}
+                      </TouchableOpacity>
+                    </View>
+                    {errors.location && <Text style={styles.errorText}>{errors.location}</Text>}
+                  </View>
+
+                  {mapVisible && location && (
+                    <View style={styles.mapContainer}>
+                      <MapView
+                        style={styles.map}
+                        initialRegion={{
+                          latitude: location.latitude,
+                          longitude: location.longitude,
+                          latitudeDelta: 0.005,
+                          longitudeDelta: 0.005,
+                        }}>
+                        <Marker
+                          coordinate={{
+                            latitude: location.latitude,
+                            longitude: location.longitude,
+                          }}
+                          title="Your Restaurant">
+                          <View style={styles.marker}>
+                            <MaterialIcons
+                              name="restaurant"
+                              size={24}
+                              color={themeColor.bgColor(1)}
+                            />
+                          </View>
+                        </Marker>
+                      </MapView>
+                    </View>
+                  )}
+
+                  <View style={styles.row}>
+                    <View style={[styles.inputGroup, { flex: 1, marginRight: 10 }]}>
+                      <Text style={styles.label}>Rating</Text>
+                      <View style={styles.inputContainer}>
+                        <MaterialIcons
+                          name="star"
+                          size={20}
+                          color="#FFD700"
+                          style={styles.inputIcon}
+                        />
+                        <TextInput
+                          style={styles.input}
+                          placeholder="e.g. 4.5"
+                          value={form.stars}
+                          keyboardType="numeric"
+                          onChangeText={(text) => setForm({ ...form, stars: text })}
+                        />
+                      </View>
+                    </View>
+                    <View style={[styles.inputGroup, { flex: 1 }]}>
+                      <Text style={styles.label}>Reviews</Text>
+                      <View style={styles.inputContainer}>
+                        <MaterialIcons
+                          name="reviews"
+                          size={20}
+                          color="#666"
+                          style={styles.inputIcon}
+                        />
+                        <TextInput
+                          style={styles.input}
+                          placeholder="e.g. 100+"
+                          value={form.reviews}
+                          onChangeText={(text) => setForm({ ...form, reviews: text })}
+                        />
+                      </View>
+                    </View>
+                  </View>
+
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.label}>Categories</Text>
+                    <View style={styles.inputContainer}>
+                      <MaterialIcons
+                        name="category"
+                        size={20}
+                        color="#666"
+                        style={styles.inputIcon}
+                      />
+                      <TextInput
+                        style={styles.input}
+                        placeholder="e.g. Italian, Pizza, Pasta"
+                        value={form.categories}
+                        onChangeText={(text) => setForm({ ...form, categories: text })}
+                      />
+                    </View>
+                  </View>
+                </View>
+
+                {/* Submit Button */}
+                <TouchableOpacity
+                  style={[styles.submitButton, loading && styles.submitButtonDisabled]}
+                  onPress={handleSubmit}
+                  disabled={loading}
+                  activeOpacity={0.8}>
+                  {loading ? (
+                    <ActivityIndicator color="white" />
+                  ) : (
+                    <Text style={styles.submitButtonText}>
+                      <MaterialIcons name="add-business" size={20} color="white" /> Submit
+                      Restaurant
+                    </Text>
+                  )}
+                </TouchableOpacity>
+              </ScrollView>
+            </Animated.View>
+          </PanGestureHandler>
+        </LinearGradient>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({

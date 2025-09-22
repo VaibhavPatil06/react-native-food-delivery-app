@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const allowedOrigins = [
-  "http://localhost:8081",
+  "http://192.168.31.195:8081",
   "http://localhost:19006", // React Native dev server
   "exp://your-device-ip:19000", // Expo dev client
 ];
@@ -43,7 +43,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/auth", router);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/featured", featuredRoutes);
-app.use("/api/order",orderRouter)
+app.use("/api/order", orderRouter);
 // Protected route example
 app.get("/api/protected", authenticateToken, (req, res) => {
   res.json({ message: "Protected data", user: req.user });
