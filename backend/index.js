@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const allowedOrigins = [
-  "http://192.168.31.195:8081",
+  "http://192.168.1.23:8081",
   "http://localhost:19006", // React Native dev server
   "exp://your-device-ip:19000", // Expo dev client
 ];

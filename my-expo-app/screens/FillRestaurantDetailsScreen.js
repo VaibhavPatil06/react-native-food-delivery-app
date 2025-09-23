@@ -17,6 +17,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
+import * as DocumentPicker from 'expo-document-picker';
 import { selectAccessToken } from 'slices/authSlice';
 import { Ionicons, MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import { themeColor } from 'theme';
@@ -63,25 +64,30 @@ export default function FillRestaurantDetailsScreen({ navigation }) {
     }).start();
   };
 
-  const pickImage = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permission required', 'We need access to your photos to upload an image.');
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 0.8,
+ const pickImage = async () => {
+  try {
+    const result = await DocumentPicker.getDocumentAsync({
+      type: 'image/*',
+      copyToCacheDirectory: true,
+      multiple: false,
     });
+console.log(result)
+  if (!result.canceled && result.assets && result.assets.length > 0) {
+      const file = result.assets[0];
+      setImage({
+        uri: file.uri,
+        name: file.name || "photo.jpg",
+        type: file.mimeType || "image/jpeg",
+      });
 
-    if (!result.canceled) {
-      setImage(result.assets[0]);
+      setErrors((prev) => ({ ...prev, image: undefined }));
     }
-  };
-
+  } catch (error) {
+    console.error('Document picker error:', error);
+    Alert.alert('Error', 'Failed to select image');
+  }
+};
+console.log(image)
   const getCurrentLocation = async () => {
     setLoading(true);
     try {
@@ -224,7 +230,7 @@ export default function FillRestaurantDetailsScreen({ navigation }) {
                     {image ? (
                       <>
                         <Image
-                          source={{ uri: `${IMAGE_URL}${image.uri}` }}
+                          source={{ uri: `${image.uri}` }}
                           style={styles.previewImage}
                         />
                         <View style={styles.editOverlay}>

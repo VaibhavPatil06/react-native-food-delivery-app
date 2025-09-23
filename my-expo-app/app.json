@@ -12,7 +12,8 @@
       "tsconfigPaths": true
     },
     "extra": {
-      "BACKEND_URL": "http://192.168.31.195:3000/api"
+      "BACKEND_URL": "http://192.168.1.23:3000/api",
+      "IMAGE_URL":"http://192.168.1.23:3000"
     },
     "plugins": [],
 
@@ -36,7 +37,11 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": ["READ_MEDIA_IMAGES", "CAMERA", "ACCESS_FINE_LOCATION"]
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
     }
   }
 }

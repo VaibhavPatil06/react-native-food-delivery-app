@@ -35,7 +35,7 @@ export const getOrderById = async (orderId, token) => {
     return response.data;
   } catch (error) {
     console.error('Error fetching order:', error.response?.data || error.message);
-    throw error;
+    // throw error;
   }
 };
 export const getMyOrders = async (token) => {
@@ -48,7 +48,7 @@ export const getMyOrders = async (token) => {
     return response.data;
   } catch (error) {
     console.error('Error fetching orders:', error.response?.data || error.message);
-    throw error;
+    // throw error;
   }
 };
 // Move these outside to prevent circular imports
@@ -59,7 +59,7 @@ export const fetchCategories = async () => {
   } catch (error) {
     console.log(error);
     console.error('Error fetching categories:', error);
-    throw error;
+    // throw error;
   }
 };
 
@@ -83,7 +83,7 @@ export const handleTokenRefresh = async () => {
   } catch (error) {
     await removeData('userToken');
     await removeData('refreshToken');
-    throw error;
+    // throw error;
   }
 };
 

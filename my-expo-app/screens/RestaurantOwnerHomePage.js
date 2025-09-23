@@ -12,13 +12,14 @@ import {
   Modal,
   Image,
   Dimensions,
+  Linking,
 } from 'react-native';
 import axios from 'axios';
 import { selectAccessToken } from 'slices/authSlice';
 import { useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { LinearGradient } from 'expo-linear-gradient';
-import * as ImagePicker from 'expo-image-picker';
+import * as DocumentPicker from 'expo-document-picker';
 import { Ionicons, MaterialIcons, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 
@@ -105,30 +106,75 @@ const RestaurantOwnerHomePage = ({ navigation }) => {
     }
   };
 
+  // Using expo-document-picker for image selection
   const pickImage = async () => {
     try {
-      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-      if (!permissionResult.granted) {
-        showErrorAlert('Permission required', 'Please allow media access to select an image.');
-        return;
-      }
-
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 0.8,
+      console.log('Opening document picker...');
+      
+      const result = await DocumentPicker.getDocumentAsync({
+        type: 'image/*',
+        copyToCacheDirectory: true,
+        multiple: false,
       });
 
-      if (!result.canceled) {
-        setNewDish((prev) => ({ ...prev, image: result.assets[0] }));
-        setErrors((prev) => ({ ...prev, image: '' }));
+      console.log('Document picker result:', result);
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        // Check if the selected file is an image
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      const file = result.assets[0];
+          setNewDish((prev) => ({ 
+            ...prev, 
+            image: {
+              uri: file.uri,
+              name: file.name,
+              type: file.mimeType,
+              size: file.size
+            }
+          }));
+          setErrors((prev) => ({ ...prev, image: '' }));
+          console.log('Image selected successfully:', result.name);
+        } else {
+          Alert.alert('Invalid File', 'Please select an image file (JPEG, PNG, etc.)');
+        }
+      } else {
+        console.log('User cancelled document picker');
       }
     } catch (err) {
-      console.error('Error picking image:', err);
-      showErrorAlert('Image Selection Error', 'Failed to select image');
+      console.error('Error picking document:', err);
+      showErrorAlert(
+        'Document Selection Error', 
+        'Failed to select image. Please try again.',
+        [
+          { 
+            text: 'Open Settings', 
+            onPress: () => Linking.openSettings() 
+          },
+          { 
+            text: 'Cancel', 
+            style: 'cancel' 
+          }
+        ]
+      );
     }
+  };
+
+  // Alternative: Show options for different picker methods
+  const showImageOptions = () => {
+    Alert.alert(
+      'Select Dish Image',
+      'Choose how you want to add a dish photo',
+      [
+        {
+          text: 'Choose from Files',
+          onPress: pickImage,
+        },
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+      ]
+    );
   };
 
   const handleStatusUpdate = async (orderId, status) => {
@@ -173,11 +219,11 @@ const RestaurantOwnerHomePage = ({ navigation }) => {
       formData.append('description', newDish.description);
 
       if (newDish.image && newDish.image.uri) {
-        // Only append if it's a new image (has uri property)
+        // For new images selected via document picker
         formData.append('image', {
           uri: newDish.image.uri,
-          name: `dish-${Date.now()}.jpg`,
-          type: 'image/jpeg',
+          name: newDish.image.name || `dish-${Date.now()}.jpg`,
+          type: newDish.image.type || 'image/jpeg',
         });
       }
 
@@ -219,6 +265,7 @@ const RestaurantOwnerHomePage = ({ navigation }) => {
     setEditingDish(null);
     setShowAddDishModal(false);
   };
+
   const handleDeleteDish = async (dishId) => {
     try {
       setLoading((prev) => ({ ...prev, deleteDish: true }));
@@ -235,8 +282,8 @@ const RestaurantOwnerHomePage = ({ navigation }) => {
     }
   };
 
-  const showErrorAlert = (title, message) => {
-    Alert.alert(title, message, [
+  const showErrorAlert = (title, message, buttons = null) => {
+    Alert.alert(title, message, buttons || [
       { text: 'OK', onPress: () => setErrors((prev) => ({ ...prev, general: '' })) },
     ]);
   };
@@ -304,10 +351,15 @@ const RestaurantOwnerHomePage = ({ navigation }) => {
                 ]}>
                 <MaterialCommunityIcons name={statusIcons[status]} size={16} color="#fff" />
               </View>
-              <Text>{statusLabels[status]}</Text>
+              <Text style={styles.progressLabel}>{statusLabels[status]}</Text>
             </TouchableOpacity>
 
-            {index < Object.keys(statusColors).length - 1 && <View style={styles.progressLine} />}
+            {index < Object.keys(statusColors).length - 1 && (
+              <View style={[
+                styles.progressLine, 
+                { backgroundColor: item.status === status ? statusColors[status] : '#e0e0e0' }
+              ]} />
+            )}
           </React.Fragment>
         ))}
       </View>
@@ -328,65 +380,51 @@ const RestaurantOwnerHomePage = ({ navigation }) => {
       )}
     </View>
   );
+const renderDishItem = ({ item }) => {
+  if (!item) return null; // safeguard if item is undefined
 
-  const renderDishItem = ({ item }) => {
-    const imageUrl = item.image ? `${IMAGE_URL}${item.image}` : 'https://via.placeholder.com/150';
-    imageUrl;
-    return (
-      <View style={styles.dishCard}>
-        <Image source={{ uri: imageUrl }} style={styles.dishImage} />
-        <View style={styles.dishDetails}>
-          <Text style={styles.dishName}>{item.name}</Text>
-          <View style={styles.priceRatingContainer}>
-            <Text style={styles.dishPrice}>₹{item.price}</Text>
-            <View style={styles.popularTag}>
-              <MaterialIcons name="star" size={14} color="#FFD700" />
-              <Text style={styles.popularText}>Popular</Text>
-            </View>
-          </View>
-          <Text style={styles.dishDescription} numberOfLines={2}>
-            {item.description || 'No description'}
-          </Text>
-
-          <View style={styles.dishActions}>
-            <TouchableOpacity
-              style={[styles.actionButton, styles.editButton]}
-              onPress={() => handleEditDish(item)}
-              disabled={loading.deleteDish}>
-              <Icon name="edit" size={26} color="#fff" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.actionButton, styles.deleteButton]}
-              onPress={() => handleDeleteDish(item._id)}
-              disabled={loading.deleteDish}>
-              {loading.deleteDish ? (
-                <ActivityIndicator size="small" color="#fff" />
-              ) : (
-                <>
-                  <Icon name="delete" size={26} color="#fff" />
-                </>
-              )}
-            </TouchableOpacity>
+  const imageUrl = item?.image 
+    ? `${IMAGE_URL}${item.image}`
+    : 'https://via.placeholder.com/150';
+  return (
+    <View style={styles.dishCard}>
+      <Image source={{ uri: imageUrl }} style={styles.dishImage} />
+      <View style={styles.dishDetails}>
+        <Text style={styles.dishName}>{item?.name || "Unnamed Dish"}</Text>
+        <View style={styles.priceRatingContainer}>
+          <Text style={styles.dishPrice}>₹{item?.price || 0}</Text>
+          <View style={styles.popularTag}>
+            <MaterialIcons name="star" size={14} color="#FFD700" />
+            <Text style={styles.popularText}>Popular</Text>
           </View>
         </View>
-      </View>
-    );
-  };
+        <Text style={styles.dishDescription} numberOfLines={2}>
+          {item?.description || 'No description'}
+        </Text>
 
-  const getStatusColor = (status) => {
-    switch (status.toLowerCase()) {
-      case 'preparing':
-        return '#FFA500'; // Orange
-      case 'on-the-way':
-        return '#3498db'; // Blue
-      case 'delivered':
-        return '#2ecc71'; // Green
-      case 'cancelled':
-        return '#e74c3c'; // Red
-      default:
-        return '#95a5a6'; // Grey
-    }
-  };
+        <View style={styles.dishActions}>
+          <TouchableOpacity
+            style={[styles.actionButton, styles.editButton]}
+            onPress={() => handleEditDish(item)}
+            disabled={loading.deleteDish}>
+            <Icon name="edit" size={26} color="#fff" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.actionButton, styles.deleteButton]}
+            onPress={() => handleDeleteDish(item?._id)}
+            disabled={loading.deleteDish}>
+            {loading.deleteDish ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Icon name="delete" size={26} color="#fff" />
+            )}
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
+};
+
 
   if ((loading.orders || loading.dishes) && !showAddDishModal) {
     return (
@@ -490,25 +528,26 @@ const RestaurantOwnerHomePage = ({ navigation }) => {
                   <Text style={styles.errorBannerText}>{errors.general}</Text>
                 </View>
               )}
-
               <TouchableOpacity
                 style={styles.imageUploadButton}
-                onPress={pickImage}
+                onPress={showImageOptions} // Changed to show options
                 activeOpacity={0.8}>
                 {newDish.image ? (
                   <>
                     <Image
-                      source={{ uri: `${IMAGE_URL}${newDish.image.uri}` }}
+                      source={{ uri: newDish.image.uri }}
                       style={styles.previewImage}
                     />
                     <View style={styles.editOverlay}>
                       <MaterialIcons name="edit" size={24} color="white" />
+                      <Text style={styles.editText}>Change Photo</Text>
                     </View>
                   </>
                 ) : (
                   <View style={styles.uploadPlaceholder}>
-                    <FontAwesome name="camera" size={32} color="#666" />
+                    <FontAwesome name="image" size={32} color="#666" />
                     <Text style={styles.uploadText}>Add Dish Photo</Text>
+                    <Text style={styles.uploadSubtext}>Tap to choose from files</Text>
                   </View>
                 )}
               </TouchableOpacity>
@@ -636,18 +675,18 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     fontSize: 14,
   },
-  dishCard: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    marginBottom: 16,
-    overflow: 'hidden',
-    flexDirection: 'row',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
+  // dishCard: {
+  //   backgroundColor: 'white',
+  //   borderRadius: 12,
+  //   marginBottom: 16,
+  //   overflow: 'hidden',
+  //   flexDirection: 'row',
+  //   shadowColor: '#000',
+  //   shadowOffset: { width: 0, height: 2 },
+  //   shadowOpacity: 0.1,
+  //   shadowRadius: 4,
+  //   elevation: 2,
+  // },
   dishImage: {
     width: 120,
     height: 120,
@@ -748,11 +787,11 @@ const styles = StyleSheet.create({
     color: '#333',
     fontSize: 16,
   },
-  statusBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-    borderRadius: 12,
-  },
+  // statusBadge: {
+  //   paddingHorizontal: 10,
+  //   paddingVertical: 3,
+  //   borderRadius: 12,
+  // },
   statusText: {
     color: '#fff',
     fontSize: 12,
@@ -1014,6 +1053,23 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#999',
     marginTop: 2,
+  },
+    editText: {
+    color: 'white',
+    fontSize: 12,
+    marginTop: 4,
+  },
+  uploadSubtext: {
+    marginTop: 4,
+    color: '#999',
+    fontSize: 12,
+    textAlign: 'center',
+  },
+  progressLabel: {
+    fontSize: 10,
+    marginTop: 4,
+    textAlign: 'center',
+    fontWeight: '500',
   },
   statusBadge: {
     flexDirection: 'row',
